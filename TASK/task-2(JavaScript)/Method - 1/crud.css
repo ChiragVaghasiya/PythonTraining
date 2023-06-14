@@ -1,0 +1,17 @@
+*{
+    padding: 0;
+    margin: 0;
+    background-color: rgb(175, 235, 235);
+}
+body{
+    background-color: #9293b1;}
+header{
+    text-align: center;
+    margin: 26px;
+}
+aside{
+    /* position: relative; */
+    display: block;
+    float: right;
+    /* margin-right: 5px; */
+}

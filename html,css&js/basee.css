@@ -1,0 +1,32 @@
+*{
+    align-items: center;
+    justify-content: center;
+    margin:0px;
+    padding: auto;
+}
+.container:hover{
+    color: rgb(235, 186, 152);
+    border: 2px solid black;
+    display: inline;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    /* background-image: url(images/istockphoto-1357410492-170667a.jpg); */
+}
+.container{
+    background-color: rgb(226, 200, 171);
+    border: 2px solid black;
+    display: inline;
+    justify-content: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    /* flood-color: aqua; */
+}
+/* .navbarr{
+    display: inline;
+    list-style: none;
+} */
+.picture{
+    width: 100vh;
+    height: 1000vh;
+    display: inline;
+}

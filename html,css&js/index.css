@@ -1,0 +1,21 @@
+.paraaa{
+    background-color: antiquewhite;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin: 50px 64px 25px 64px;
+    padding: auto;
+    border: 2px solid black;
+    border-radius: 8px;
+    display: block;
+}
+.headinggg
+{
+    color: blue;
+    font-size: 44px;
+    display: block;
+    text-align: center;
+
+} 
+.buttunnn{
+    display: block;
+    text-align: center;
+}
