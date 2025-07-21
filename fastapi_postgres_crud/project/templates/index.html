@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/static/app.js"></script>
+    <title>CRUD Tabular Forms</title>
+</head>
+<body>
+<h1>Products</h1>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Actions</th>
+    </tr>
+    {% for p in products %}
+    <tr>
+        <form action="/products/update/{{ p.id }}" method="post">
+            <td>{{ p.id }}</td>
+            <td><input name="name" value="{{ p.name }}"/></td>
+            <td><input name="price" value="{{ p.price }}"/></td>
+            <td>
+                <button type="submit">Update</button>
+        </form>
+        <form action="/products/delete/{{ p.id }}" method="post" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
+        </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <form action="/products/create" method="post">
+            <td>—</td>
+            <td><input name="name"/></td>
+            <td><input name="price"/></td>
+            <td>
+                <button type="submit">Add</button>
+            </td>
+        </form>
+    </tr>
+</table>
+
+<h1>Customers</h1>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+    {% for c in customers %}
+    <tr>
+        <form action="/customers/update/{{ c.id }}" method="post">
+            <td>{{ c.id }}</td>
+            <td><input name="name" value="{{ c.name }}"/></td>
+            <td><input name="email" value="{{ c.email }}"/></td>
+            <td>
+                <button type="submit">Update</button>
+        </form>
+        <form action="/customers/delete/{{ c.id }}" method="post" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
+        </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <form action="/customers/create" method="post">
+            <td>—</td>
+            <td><input name="name"/></td>
+            <td><input name="email"/></td>
+            <td>
+                <button type="submit">Add</button>
+            </td>
+        </form>
+    </tr>
+</table>
