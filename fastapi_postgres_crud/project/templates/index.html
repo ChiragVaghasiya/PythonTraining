@@ -1,76 +1,354 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/static/app.js"></script>
-    <title>CRUD Tabular Forms</title>
+    <meta charset="utf-8">
+    <title>Tax App Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/app.js" defer></script>
 </head>
 <body>
-<h1>Products</h1>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Actions</th>
-    </tr>
-    {% for p in products %}
-    <tr>
-        <form action="/products/update/{{ p.id }}" method="post">
-            <td>{{ p.id }}</td>
-            <td><input name="name" value="{{ p.name }}"/></td>
-            <td><input name="price" value="{{ p.price }}"/></td>
-            <td>
-                <button type="submit">Update</button>
-        </form>
-        <form action="/products/delete/{{ p.id }}" method="post" style="display:inline;">
+<h1>MasterDetails</h1>
+<ul>
+    {% for md in master_list %}
+    <li>
+        {{ md.id }} – {{ md.name }} ({{ md.company_id }})
+        <form action="/master/delete/{{ md.id }}" method="post" style="display:inline">
             <button type="submit">Delete</button>
         </form>
-        </td>
-    </tr>
+        <button onclick="showEdit('md-{{md.id}}')">Edit</button>
+        <div id="md-{{md.id}}" class="edit-form" style="display:none">
+            <form action="/master/update/{{ md.id }}" method="post">
+                Name: <input name="name" value="{{ md.name }}" required><br>
+                Company ID: <input name="company_id" value="{{ md.company_id }}" required><br>
+                Date From: <input type="date" name="date_from" value="{{ md.date_from }}" required><br>
+                Date To: <input type="date" name="date_to" value="{{ md.date_to }}" required><br>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
     {% endfor %}
-    <tr>
-        <form action="/products/create" method="post">
-            <td>—</td>
-            <td><input name="name"/></td>
-            <td><input name="price"/></td>
-            <td>
-                <button type="submit">Add</button>
-            </td>
-        </form>
-    </tr>
-</table>
+</ul>
+<h2>Add MasterDetails</h2>
+<form action="/master/create" method="post">
+    Name: <input name="name" required><br>
+    Company ID: <input name="company_id" required><br>
+    Date From: <input type="date" name="date_from" required><br>
+    Date To: <input type="date" name="date_to" required><br>
+    <button type="submit">Create</button>
+</form>
 
-<h1>Customers</h1>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Actions</th>
-    </tr>
-    {% for c in customers %}
-    <tr>
-        <form action="/customers/update/{{ c.id }}" method="post">
-            <td>{{ c.id }}</td>
-            <td><input name="name" value="{{ c.name }}"/></td>
-            <td><input name="email" value="{{ c.email }}"/></td>
-            <td>
-                <button type="submit">Update</button>
-        </form>
-        <form action="/customers/delete/{{ c.id }}" method="post" style="display:inline;">
+<!-- BasicDetails -->
+<h1>BasicDetails</h1>
+<ul>
+    {% for bd in basic_list %}
+    <li>
+        {{ bd.id }} – Master#{{ bd.master_details_id }} | Basic %: {{ bd.basic_percentage }} | HRA: {{ bd.hra }}
+        <form action="/basic/delete/{{ bd.id }}" method="post" style="display:inline">
             <button type="submit">Delete</button>
         </form>
-        </td>
-    </tr>
+        <button onclick="showEdit('bd-{{bd.id}}')">Edit</button>
+        <div id="bd-{{bd.id}}" class="edit-form" style="display:none">
+            <form action="/basic/update/{{ bd.id }}" method="post">
+                Master ID: <input name="master_details_id" value="{{ bd.master_details_id }}" required><br>
+                Basic %: <input type="number" step="0.01" name="basic_percentage" value="{{ bd.basic_percentage }}"
+                                required><br>
+                HRA: <input type="number" step="0.01" name="hra" value="{{ bd.hra }}" required><br>
+                Std Ded Old: <input type="number" name="stan_ded_old_regime" value="{{ bd.stan_ded_old_regime }}"
+                                    required><br>
+                Std Ded New: <input type="number" name="stan_ded_new_regime" value="{{ bd.stan_ded_new_regime }}"
+                                    required><br>
+                <!-- Add other fields similarly -->
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
     {% endfor %}
-    <tr>
-        <form action="/customers/create" method="post">
-            <td>—</td>
-            <td><input name="name"/></td>
-            <td><input name="email"/></td>
-            <td>
-                <button type="submit">Add</button>
-            </td>
+</ul>
+<h2>Add BasicDetails</h2>
+<form action="/basic/create" method="post">
+    Master ID: <input type="number" name="master_details_id" required><br>
+    Basic %: <input type="number" step="0.01" name="basic_percentage" required><br>
+    HRA: <input type="number" step="0.01" name="hra" required><br>
+    Std Ded Old: <input type="number" name="stan_ded_old_regime" required><br>
+    Std Ded New: <input type="number" name="stan_ded_new_regime" required><br>
+    Gratuity %: <input type="number" step="0.01" name="gratuity_percentage" required><br>
+    Gratuity Mult: <input type="number" step="0.01" name="gratuity_multiplier" required><br>
+    Cess: <input type="number" step="0.01" name="cess" required><br>
+    Prof Tax: <input type="number" name="professional_tax" required><br>
+    Phys Challenged: <input type="checkbox" name="physically_challenged"><br>
+    Age Above: <input type="number" name="age_above" required><br>
+    Monthly Salary Limit: <input type="number" name="monthly_salary_limit" required><br>
+    TDS: <input type="number" step="0.01" name="tax_deducted_at_source" required><br>
+    PF %: <input type="number" step="0.01" name="pf_percentage" required><br>
+    PF Ceiling: <input type="number" step="0.01" name="pf_ceiling_limit" required><br>
+    ESIC EE %: <input type="number" step="0.01" name="esic_ee_percentage" required><br>
+    ESIC ER %: <input type="number" step="0.01" name="esic_er_percentage" required><br>
+    ESIC Wage Limit: <input type="number" step="0.01" name="esic_wage_limit" required><br>
+    ESIC Wag Lim Phy Cha: <input type="number" step="0.01" name="esic_wag_lim_phy_cha" required><br>
+    <button type="submit">Create</button>
+</form>
+
+<!-- MinBasic -->
+<h1>MinBasic</h1>
+<ul>
+    {% for mb in min_list %}
+    <li>
+        {{ mb.id }} – Master#{{ mb.master_details_id }} | {{ mb.date_from }} to {{ mb.date_to }} | Amount: {{ mb.amount
+        }}
+        <form action="/minbasic/delete/{{ mb.id }}" method="post" style="display:inline">
+            <button type="submit">Delete</button>
         </form>
-    </tr>
-</table>
+        <button onclick="showEdit('mb-{{mb.id}}')">Edit</button>
+        <div id="mb-{{mb.id}}" class="edit-form" style="display:none">
+            <form action="/minbasic/update/{{ mb.id }}" method="post">
+                Date From: <input type="date" name="date_from" value="{{ mb.date_from }}" required><br>
+                Date To: <input type="date" name="date_to" value="{{ mb.date_to }}" required><br>
+                Amount: <input type="number" step="0.01" name="amount" value="{{ mb.amount }}" required><br>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Add MinBasic</h2>
+<form action="/minbasic/create" method="post">
+    Master ID: <input type="number" name="master_details_id" required><br>
+    Date From: <input type="date" name="date_from" required><br>
+    Date To: <input type="date" name="date_to" required><br>
+    Amount: <input type="number" step="0.01" name="amount" required><br>
+    <button type="submit">Create</button>
+</form>
+
+<!-- MaxBasic -->
+<h1>MaxBasic</h1>
+<ul>
+    {% for xb in max_list %}
+    <li>
+        {{ xb.id }} – Master#{{ xb.master_details_id }} | {{ xb.date_from }} to {{ xb.date_to }} | Amount: {{ xb.amount
+        }}
+        <form action="/maxbasic/delete/{{ xb.id }}" method="post" style="display:inline">
+            <button type="submit">Delete</button>
+        </form>
+        <button onclick="showEdit('xb-{{xb.id}}')">Edit</button>
+        <div id="xb-{{xb.id}}" class="edit-form" style="display:none">
+            <form action="/maxbasic/update/{{ xb.id }}" method="post">
+                Date From: <input type="date" name="date_from" value="{{ xb.date_from }}" required><br>
+                Date To: <input type="date" name="date_to" value="{{ xb.date_to }}" required><br>
+                Amount: <input type="number" step="0.01" name="amount" value="{{ xb.amount }}" required><br>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Add MaxBasic</h2>
+<form action="/maxbasic/create" method="post">
+    Master ID: <input type="number" name="master_details_id" required><br>
+    Date From: <input type="date" name="date_from" required><br>
+    Date To: <input type="date" name="date_to" required><br>
+    Amount: <input type="number" step="0.01" name="amount" required><br>
+    <button type="submit">Create</button>
+</form>
+
+<!-- TaxRebate -->
+<h1>TaxRebate</h1>
+<ul>
+    {% for tr in rebate_list %}
+    <li>
+        {{ tr.id }} – Master#{{ tr.master_details_id }} |
+        Old Normal: {{ tr.old_tax_nor_cit_reba_amo }}@{{ tr.old_tax_nor_cit_reba_inc }} |
+        Old Senior: {{ tr.old_tax_sen_cit_reba_amo }}@{{ tr.old_tax_sen_cit_reba_inc }}
+        <form action="/rebate/delete/{{ tr.id }}" method="post" style="display:inline">
+            <button type="submit">Delete</button>
+        </form>
+        <button onclick="showEdit('tr-{{tr.id}}')">Edit</button>
+        <div id="tr-{{tr.id}}" class="edit-form" style="display:none">
+            <form action="/rebate/update/{{ tr.id }}" method="post">
+                Old Nor Amo: <input type="number" step="0.01" name="old_tax_nor_cit_reba_amo"
+                                    value="{{ tr.old_tax_nor_cit_reba_amo }}" required><br>
+                Old Nor Inc: <input type="number" step="0.01" name="old_tax_nor_cit_reba_inc"
+                                    value="{{ tr.old_tax_nor_cit_reba_inc }}" required><br>
+                <!-- Add remaining rebate fields similarly -->
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Add TaxRebate</h2>
+<form action="/rebate/create" method="post">
+    Master ID: <input type="number" name="master_details_id" required><br>
+    Old Nor Amo: <input type="number" step="0.01" name="old_tax_nor_cit_reba_amo" required><br>
+    Old Nor Inc: <input type="number" step="0.01" name="old_tax_nor_cit_reba_inc" required><br>
+    Old Sen Amo: <input type="number" step="0.01" name="old_tax_sen_cit_reba_amo" required><br>
+    Old Sen Inc: <input type="number" step="0.01" name="old_tax_sen_cit_reba_inc" required><br>
+    Old Sup Amo: <input type="number" step="0.01" name="old_tax_sup_sen_cit_reba_amo" required><br>
+    Old Sup Inc: <input type="number" step="0.01" name="old_tax_sup_sen_cit_reba_inc" required><br>
+    New Nor Amo: <input type="number" step="0.01" name="new_tax_nor_cit_reba_amo" required><br>
+    New Nor Inc: <input type="number" step="0.01" name="new_tax_nor_cit_reba_inc" required><br>
+    New Sen Amo: <input type="number" step="0.01" name="new_tax_sen_cit_reba_amo" required><br>
+    New Sen Inc: <input type="number" step="0.01" name="new_tax_sen_cit_reba_inc" required><br>
+    New Sup Amo: <input type="number" step="0.01" name="new_tax_sup_sen_cit_reba_amo" required><br>
+    New Sup Inc: <input type="number" step="0.01" name="new_tax_sup_sen_cit_reba_inc" required><br>
+    <button type="submit">Create</button>
+</form>
+
+<!-- OldRegimeTaxSlabs -->
+<h1>OldRegimeTaxSlabs</h1>
+<ul>
+    {% for ot in old_tax_list %}
+    <li>
+        {{ ot.id }} – Master#{{ ot.master_details_id }} | {{ ot.amount_from }}–{{ ot.amount_to }}
+        @ Norm:{{ ot.normal_citizen_percentage }}, Sen:{{ ot.senior_citizen_percentage }}, Sup:{{
+        ot.super_senior_citizen_percentage }}
+        <form action="/oldtax/delete/{{ ot.id }}" method="post" style="display:inline">
+            <button type="submit">Delete</button>
+        </form>
+        <button onclick="showEdit('ot-{{ot.id}}')">Edit</button>
+        <div id="ot-{{ot.id}}" class="edit-form" style="display:none">
+            <form action="/oldtax/update/{{ ot.id }}" method="post">
+                From: <input type="number" name="amount_from" value="{{ ot.amount_from }}" required><br>
+                To: <input type="number" name="amount_to" value="{{ ot.amount_to }}" required><br>
+                Norm %: <input type="number" step="0.01" name="normal_citizen_percentage"
+                               value="{{ ot.normal_citizen_percentage }}" required><br>
+                Sen %: <input type="number" step="0.01" name="senior_citizen_percentage"
+                              value="{{ ot.senior_citizen_percentage }}" required><br>
+                Sup %: <input type="number" step="0.01" name="super_senior_citizen_percentage"
+                              value="{{ ot.super_senior_citizen_percentage }}" required><br>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Add OldRegimeTaxSlab</h2>
+<form action="/oldtax/create" method="post">
+    Master ID: <input type="number" name="master_details_id" required><br>
+    From: <input type="number" name="amount_from" required><br>
+    To: <input type="number" name="amount_to" required><br>
+    Norm %: <input type="number" step="0.01" name="normal_citizen_percentage" required><br>
+    Sen %: <input type="number" step="0.01" name="senior_citizen_percentage" required><br>
+    Sup %: <input type="number" step="0.01" name="super_senior_citizen_percentage" required><br>
+    <button type="submit">Create</button>
+</form>
+
+<!-- NewRegimeTaxSlabs -->
+<h1>NewRegimeTaxSlabs</h1>
+<ul>
+    {% for nt in new_tax_list %}
+    <li>
+        {{ nt.id }} – Master#{{ nt.master_details_id }} | {{ nt.amount_from }}–{{ nt.amount_to }}
+        @ Norm:{{ nt.normal_citizen_percentage }}, Sen:{{ nt.senior_citizen_percentage }}, Sup:{{
+        nt.super_senior_citizen_percentage }}
+        <form action="/newtax/delete/{{ nt.id }}" method="post" style="display:inline">
+            <button type="submit">Delete</button>
+        </form>
+        <button onclick="showEdit('nt-{{nt.id}}')">Edit</button>
+        <div id="nt-{{nt.id}}" class="edit-form" style="display:none">
+            <form action="/newtax/update/{{ nt.id }}" method="post">
+                From: <input type="number" name="amount_from" value="{{ nt.amount_from }}" required><br>
+                To: <input type="number" name="amount_to" value="{{ nt.amount_to }}" required><br>
+                Norm %: <input type="number" step="0.01" name="normal_citizen_percentage"
+                               value="{{ nt.normal_citizen_percentage }}" required><br>
+                Sen %: <input type="number" step="0.01" name="senior_citizen_percentage"
+                              value="{{ nt.senior_citizen_percentage }}" required><br>
+                Sup %: <input type="number" step="0.01" name="super_senior_citizen_percentage"
+                              value="{{ nt.super_senior_citizen_percentage }}" required><br>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Add NewRegimeTaxSlab</h2>
+<form action="/newtax/create" method="post">
+    Master ID: <input type="number" name="master_details_id" required><br>
+    From: <input type="number" name="amount_from" required><br>
+    To: <input type="number" name="amount_to" required><br>
+    Norm %: <input type="number" step="0.01" name="normal_citizen_percentage" required><br>
+    Sen %: <input type="number" step="0.01" name="senior_citizen_percentage" required><br>
+    Sup %: <input type="number" step="0.01" name="super_senior_citizen_percentage" required><br>
+    <button type="submit">Create</button>
+</form>
+
+<!-- OldRegimeSurchargeSlabs -->
+<h1>OldRegimeSurchargeSlabs</h1>
+<ul>
+    {% for os in old_surcharge_list %}
+    <li>
+        {{ os.id }} – Master#{{ os.master_details_id }} | {{ os.amount_from }}–{{ os.amount_to }}
+        @ Norm:{{ os.normal_citizen_percentage }}, Sen:{{ os.senior_citizen_percentage }}, Sup:{{
+        os.super_senior_citizen_percentage }}
+        <form action="/oldsurcharge/delete/{{ os.id }}" method="post" style="display:inline">
+            <button type="submit">Delete</button>
+        </form>
+        <button onclick="showEdit('os-{{os.id}}')">Edit</button>
+        <div id="os-{{os.id}}" class="edit-form" style="display:none">
+            <form action="/oldsurcharge/update/{{ os.id }}" method="post">
+                From: <input type="number" name="amount_from" value="{{ os.amount_from }}" required><br>
+                To: <input type="number" name="amount_to" value="{{ os.amount_to }}" required><br>
+                Norm %: <input type="number" step="0.01" name="normal_citizen_percentage"
+                               value="{{ os.normal_citizen_percentage }}" required><br>
+                Sen %: <input type="number" step="0.01" name="senior_citizen_percentage"
+                              value="{{ os.senior_citizen_percentage }}" required><br>
+                Sup %: <input type="number" step="0.01" name="super_senior_citizen_percentage"
+                              value="{{ os.super_senior_citizen_percentage }}" required><br>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Add OldRegimeSurchargeSlab</h2>
+<form action="/oldsurcharge/create" method="post">
+    Master ID: <input type="number" name="master_details_id" required><br>
+    From: <input type="number" name="amount_from" required><br>
+    To: <input type="number" name="amount_to" required><br>
+    Norm %: <input type="number" step="0.01" name="normal_citizen_percentage" required><br>
+    Sen %: <input type="number" step="0.01" name="senior_citizen_percentage" required><br>
+    Sup %: <input type="number" step="0.01" name="super_senior_citizen_percentage" required><br>
+    <button type="submit">Create</button>
+</form>
+
+<!-- NewRegimeSurchargeSlabs -->
+<h1>NewRegimeSurchargeSlabs</h1>
+<ul>
+    {% for ns in new_surcharge_list %}
+    <li>
+        {{ ns.id }} – Master#{{ ns.master_details_id }} | {{ ns.amount_from }}–{{ ns.amount_to }}
+        @ Norm:{{ ns.normal_citizen_percentage }}, Sen:{{ ns.senior_citizen_percentage }}, Sup:{{
+        ns.super_senior_citizen_percentage }}
+        <form action="/newsurcharge/delete/{{ ns.id }}" method="post" style="display:inline">
+            <button type="submit">Delete</button>
+        </form>
+        <button onclick="showEdit('ns-{{ns.id}}')">Edit</button>
+        <div id="ns-{{ns.id}}" class="edit-form" style="display:none">
+            <form action="/newsurcharge/update/{{ ns.id }}" method="post">
+                From: <input type="number" name="amount_from" value="{{ ns.amount_from }}" required><br>
+                To: <input type="number" name="amount_to" value="{{ ns.amount_to }}" required><br>
+                Norm %: <input type="number" step="0.01" name="normal_citizen_percentage"
+                               value="{{ ns.normal_citizen_percentage }}" required><br>
+                Sen %: <input type="number" step="0.01" name="senior_citizen_percentage"
+                              value="{{ ns.senior_citizen_percentage }}" required><br>
+                Sup %: <input type="number" step="0.01" name="super_senior_citizen_percentage"
+                              value="{{ ns.super_senior_citizen_percentage }}" required><br>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Add NewRegimeSurchargeSlab</h2>
+<form action="/newsurcharge/create" method="post">
+    Master ID: <input type="number" name="master_details_id" required><br>
+    From: <input type="number" name="amount_from" required><br>
+    To: <input type="number" name="amount_to" required><br>
+    Norm %: <input type="number" step="0.01" name="normal_citizen_percentage" required><br>
+    Sen %: <input type="number" step="0.01" name="senior_citizen_percentage" required><br>
+    Sup %: <input type="number" step="0.01" name="super_senior_citizen_percentage" required><br>
+    <button type="submit">Create</button>
+</form>
+
+</body>
+</html>

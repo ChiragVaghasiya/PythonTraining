@@ -1,8 +1,12 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, declarative_base
+import os
 
-database_url = "postgresql+asyncpg://chirag:CHIRAG@localhost/pos_app"
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-engine = create_async_engine(database_url, echo=True)
-SessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-Base = declarative_base()
+from models import (
+    Base)
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://chirag:CHIRAG@localhost/FastAPIOdoo")
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base.metadata.create_all(bind=engine)
