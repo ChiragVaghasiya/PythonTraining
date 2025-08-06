@@ -1,10 +1,11 @@
 from datetime import datetime
+from typing import List
 
 from fastapi import FastAPI, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from database import SessionLocal
 from models import (
@@ -18,6 +19,7 @@ from models import (
     OldRegimeSurchargeSlabs,
     NewRegimeSurchargeSlabs,
 )
+from schemas import MasterDetailsRead
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -626,3 +628,26 @@ def delete_newsurcharge(id: int, db: Session = Depends(get_db)):
     db.delete(nsl)
     db.commit()
     return RedirectResponse("/", status_code=303)
+
+
+@app.get("/report", response_model=List[MasterDetailsRead])
+def get_full_report(db: Session = Depends(get_db)):
+    """
+    Return all MasterDetails records with their related sub-lists,
+    matching the MasterDetailsRead schema exactly.
+    """
+    masters = (
+        db.query(MasterDetails)
+        .options(
+            joinedload(MasterDetails.basic_details),
+            joinedload(MasterDetails.tax_rebate),
+            joinedload(MasterDetails.min_basic),
+            joinedload(MasterDetails.max_basic),
+            joinedload(MasterDetails.old_regime_tax_slabs),
+            joinedload(MasterDetails.new_regime_tax_slabs),
+            joinedload(MasterDetails.old_regime_surcharge_slabs),
+            joinedload(MasterDetails.new_regime_surcharge_slabs),
+        )
+        .all()
+    )
+    return masters

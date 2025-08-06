@@ -7,6 +7,8 @@ Base = declarative_base()
 class MasterDetails(Base):
     __tablename__ = 'master_details'
     id = Column(Integer, primary_key=True, index=True)
+    basic_details = relationship("BasicDetails", back_populates="master_details")
+    tax_rebate = relationship("TaxRebate", back_populates="master_details")
     min_basic = relationship("MinBasic", back_populates="master_details")
     max_basic = relationship("MaxBasic", back_populates="master_details")
     old_regime_tax_slabs = relationship("OldRegimeTaxSlabs", back_populates="master_details")
@@ -24,7 +26,7 @@ class BasicDetails(Base):
     __tablename__ = 'basic_details'
     id = Column(Integer, primary_key=True, index=True)
     master_details_id = Column(Integer, ForeignKey("master_details.id"))
-    master_details = relationship("MasterDetails")
+    master_details = relationship("MasterDetails", back_populates="basic_details")
 
     basic_percentage = Column(Float)
     hra = Column(Float)
@@ -72,7 +74,7 @@ class TaxRebate(Base):
     __tablename__ = 'tax_rebate'
     id = Column(Integer, primary_key=True, index=True)
     master_details_id = Column(Integer, ForeignKey("master_details.id"))
-    master_details = relationship("MasterDetails")
+    master_details = relationship("MasterDetails", back_populates="tax_rebate")
 
     old_tax_nor_cit_reba_amo = Column(Float)
     old_tax_nor_cit_reba_inc = Column(Float)

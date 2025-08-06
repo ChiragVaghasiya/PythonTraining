@@ -220,6 +220,8 @@ class MasterDetailsCreate(MasterDetailsBase):
 
 class MasterDetailsRead(MasterDetailsBase):
     id: int
+    basic_details: List[BasicDetailsRead] = []
+    tax_rebate: List[TaxRebateRead] = []
     min_basic: List[MinBasicRead] = []
     max_basic: List[MaxBasicRead] = []
     old_regime_tax_slabs: List[OldRegimeTaxSlabsRead] = []
